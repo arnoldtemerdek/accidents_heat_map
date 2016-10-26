@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css" />
+        <link rel="stylesheet" type="text/css" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/label.css" />
+        <link rel="stylesheet" href="css/MarkerCluster.css" />
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+        <script src="js/leaflet.js"></script>
+        <script src="js/OSMBuildings-Leaflet.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/label.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="data/json_Accidents0.js"></script>
+        <script>
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[38.00438915,-85.9809621632],[38.34814025,-85.3718593368]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.addAttribution('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a>');
+        var feature_group = new L.featureGroup([]);
+        var bounds_group = new L.featureGroup([]);
+        var raster_group = new L.LayerGroup([]);
+        var basemap0 = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+            maxZoom: 28
+        });
+        basemap0.addTo(map);
+        var layerOrder = new Array();
+        function stackLayers() {
+            for (index = 0; index < layerOrder.length; index++) {
+                map.removeLayer(layerOrder[index]);
+                map.addLayer(layerOrder[index]);
+            }
+        }
+        function restackLayers() {
+            for (index = 0; index < layerOrder.length; index++) {
+                layerOrder[index].bringToFront();
+            }
+        }
+        layerControl = L.control.layers({},{},{collapsed:false});
+        function pop_Accidents0(feature, layer) {
+            var popupContent = '<table><tr><th scope="row">ROADWAY NAME</th><td>' + (feature.properties['ROADWAY NAME'] !== null ? Autolinker.link(String(feature.properties['ROADWAY NAME'])) : '') + '</td></tr><tr><th scope="row">ROADWAY SUFFIX</th><td>' + (feature.properties['ROADWAY SUFFIX'] !== null ? Autolinker.link(String(feature.properties['ROADWAY SUFFIX'])) : '') + '</td></tr><tr><th scope="row">ROADWAY DIRECTION CODE</th><td>' + (feature.properties['ROADWAY DIRECTION CODE'] !== null ? Autolinker.link(String(feature.properties['ROADWAY DIRECTION CODE'])) : '') + '</td></tr><tr><th scope="row">GPS LATITUDE DECIMAL</th><td>' + (feature.properties['GPS LATITUDE DECIMAL'] !== null ? Autolinker.link(String(feature.properties['GPS LATITUDE DECIMAL'])) : '') + '</td></tr><tr><th scope="row">GPS LONGITUDE DECIMAL</th><td>' + (feature.properties['GPS LONGITUDE DECIMAL'] !== null ? Autolinker.link(String(feature.properties['GPS LONGITUDE DECIMAL'])) : '') + '</td></tr><tr><th scope="row">COLLISION DATE</th><td>' + (feature.properties['COLLISION DATE'] !== null ? Autolinker.link(String(feature.properties['COLLISION DATE'])) : '') + '</td></tr><tr><th scope="row">COLLISION TIME</th><td>' + (feature.properties['COLLISION TIME'] !== null ? Autolinker.link(String(feature.properties['COLLISION TIME'])) : '') + '</td></tr><tr><th scope="row">KILLED</th><td>' + (feature.properties['KILLED'] !== null ? Autolinker.link(String(feature.properties['KILLED'])) : '') + '</td></tr><tr><th scope="row">INJURED</th><td>' + (feature.properties['INJURED'] !== null ? Autolinker.link(String(feature.properties['INJURED'])) : '') + '</td></tr><tr><th scope="row">WEATHER</th><td>' + (feature.properties['WEATHER'] !== null ? Autolinker.link(String(feature.properties['WEATHER'])) : '') + '</td></tr><tr><th scope="row">ROADWAY CONDITION</th><td>' + (feature.properties['ROADWAY CONDITION'] !== null ? Autolinker.link(String(feature.properties['ROADWAY CONDITION'])) : '') + '</td></tr><tr><th scope="row">HIT & RUN INDICATOR</th><td>' + (feature.properties['HIT & RUN INDICATOR'] !== null ? Autolinker.link(String(feature.properties['HIT & RUN INDICATOR'])) : '') + '</td></tr></table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function doStyleAccidents0() {
+            return {
+                radius: 2.0,
+                fillColor: '#d6cd68',
+                color: '#000000',
+                weight: 0.0,
+                opacity: 1.0,
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                fillOpacity: 1.0
+            }
+        }
+        function doPointToLayerAccidents0(feature, latlng) {
+            return L.marker(latlng)
+        }
+        var json_Accidents0JSON = new L.geoJson(json_Accidents0, {
+            onEachFeature: pop_Accidents0, 
+            pointToLayer: doPointToLayerAccidents0
+            });
+        var cluster_groupAccidents0JSON = new L.MarkerClusterGroup({showCoverageOnHover: false});
+        cluster_groupAccidents0JSON.addLayer(json_Accidents0JSON);
+
+        layerOrder[layerOrder.length] = cluster_groupAccidents0JSON;
+
+        bounds_group.addLayer(json_Accidents0JSON);
+        cluster_groupAccidents0JSON.addTo(map);
+        raster_group.addTo(map);
+        feature_group.addTo(map);
+        stackLayers();
+        map.on('overlayadd', restackLayers);
+        </script>
+    </body>
+</html>
